@@ -106,14 +106,25 @@ class Line(Graph):
                     x + self.value_font_size,
                     y + self.value_font_size)
 
+        line_view_values = [[]]
+        for view_value in view_values:
+            if None in view_value:
+                line_view_values.append([])
+            else:
+                line_view_values[-1].append(view_value)
+
         if serie.stroke:
             if self.interpolate:
                 view_values = list(map(self.view, serie.interpolated))
             if serie.fill:
                 view_values = self._fill(view_values)
-            self.svg.line(
-                serie_node['plot'], view_values, close=self._self_close,
-                class_='line reactive' + (' nofill' if not serie.fill else ''))
+            for row in line_view_values:
+                if not row:
+                    continue
+                self.svg.line(
+                    serie_node['plot'], row, close=self._self_close,
+                    class_='line reactive' + (
+                        ' nofill' if not serie.fill else ''))
 
     def _compute(self):
         # X Labels
